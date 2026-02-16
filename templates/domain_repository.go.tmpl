@@ -1,0 +1,16 @@
+package {{.SnakeName}}
+
+// Repository defines the {{.ChineseName}} repository interface
+type Repository interface {
+	// FindByID finds by ID
+	FindByID(id uint) (*{{.PascalName}}, error)
+
+	// List returns paginated results
+	List(page, pageSize int, keyword string) ([]*{{.PascalName}}, int64, error)
+
+	// Save creates or updates
+	Save(entity *{{.PascalName}}) error
+
+	// Delete deletes by ID
+	Delete(id uint) error
+}

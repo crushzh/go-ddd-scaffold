@@ -1,0 +1,41 @@
+package database
+
+import (
+	"time"
+
+	"{{.ModulePath}}/internal/domain/{{.SnakeName}}"
+)
+
+// {{.PascalName}}Model is the GORM data model
+type {{.PascalName}}Model struct {
+	ID        uint      `gorm:"primaryKey"`
+	Name      string    `gorm:"size:100;not null;index"`
+	// TODO: Add database fields
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+// TableName overrides the table name
+func ({{.PascalName}}Model) TableName() string {
+	return "{{.PluralName}}"
+}
+
+// ToDomain converts to domain entity
+func (m *{{.PascalName}}Model) ToDomain() *{{.SnakeName}}.{{.PascalName}} {
+	return &{{.SnakeName}}.{{.PascalName}}{
+		ID:        m.ID,
+		Name:      m.Name,
+		CreatedAt: m.CreatedAt,
+		UpdatedAt: m.UpdatedAt,
+	}
+}
+
+// {{.PascalName}}FromDomain converts from domain entity
+func {{.PascalName}}FromDomain(e *{{.SnakeName}}.{{.PascalName}}) *{{.PascalName}}Model {
+	return &{{.PascalName}}Model{
+		ID:        e.ID,
+		Name:      e.Name,
+		CreatedAt: e.CreatedAt,
+		UpdatedAt: e.UpdatedAt,
+	}
+}

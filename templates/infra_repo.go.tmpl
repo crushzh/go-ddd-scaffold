@@ -1,0 +1,74 @@
+package database
+
+import (
+	"{{.ModulePath}}/internal/domain/{{.SnakeName}}"
+
+	"gorm.io/gorm"
+)
+
+// {{.PascalName}}Repository implements {{.SnakeName}}.Repository
+type {{.PascalName}}Repository struct {
+	db *gorm.DB
+}
+
+// New{{.PascalName}}Repository creates a new repository
+func New{{.PascalName}}Repository(database *DB) {{.SnakeName}}.Repository {
+	return &{{.PascalName}}Repository{db: database.GormDB()}
+}
+
+// FindByID finds by ID
+func (r *{{.PascalName}}Repository) FindByID(id uint) (*{{.SnakeName}}.{{.PascalName}}, error) {
+	var model {{.PascalName}}Model
+	if err := r.db.First(&model, id).Error; err != nil {
+		return nil, err
+	}
+	return model.ToDomain(), nil
+}
+
+// List returns paginated results
+func (r *{{.PascalName}}Repository) List(page, pageSize int, keyword string) ([]*{{.SnakeName}}.{{.PascalName}}, int64, error) {
+	var models []{{.PascalName}}Model
+	var total int64
+
+	query := r.db.Model(&{{.PascalName}}Model{})
+
+	if keyword != "" {
+		query = query.Where("name LIKE ?", "%"+keyword+"%")
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	if err := query.Offset(offset).Limit(pageSize).Order("id DESC").Find(&models).Error; err != nil {
+		return nil, 0, err
+	}
+
+	entities := make([]*{{.SnakeName}}.{{.PascalName}}, len(models))
+	for i := range models {
+		entities[i] = models[i].ToDomain()
+	}
+
+	return entities, total, nil
+}
+
+// Save creates or updates
+func (r *{{.PascalName}}Repository) Save(entity *{{.SnakeName}}.{{.PascalName}}) error {
+	model := {{.PascalName}}FromDomain(entity)
+	if model.ID == 0 {
+		if err := r.db.Create(model).Error; err != nil {
+			return err
+		}
+		entity.ID = model.ID
+		entity.CreatedAt = model.CreatedAt
+		entity.UpdatedAt = model.UpdatedAt
+		return nil
+	}
+	return r.db.Save(model).Error
+}
+
+// Delete deletes by ID
+func (r *{{.PascalName}}Repository) Delete(id uint) error {
+	return r.db.Delete(&{{.PascalName}}Model{}, id).Error
+}

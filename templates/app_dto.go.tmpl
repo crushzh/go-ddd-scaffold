@@ -1,0 +1,54 @@
+package dto
+
+import (
+	"time"
+
+	"{{.ModulePath}}/internal/domain/{{.SnakeName}}"
+)
+
+// {{.PascalName}}Response is the {{.ChineseName}} response DTO
+type {{.PascalName}}Response struct {
+	ID        uint      `json:"id"`
+	Name      string    `json:"name"`
+	// TODO: Add response fields
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// From{{.PascalName}} converts from domain entity
+func From{{.PascalName}}(e *{{.SnakeName}}.{{.PascalName}}) *{{.PascalName}}Response {
+	return &{{.PascalName}}Response{
+		ID:        e.ID,
+		Name:      e.Name,
+		CreatedAt: e.CreatedAt,
+		UpdatedAt: e.UpdatedAt,
+	}
+}
+
+// From{{.PascalName}}List converts from domain entity list
+func From{{.PascalName}}List(items []*{{.SnakeName}}.{{.PascalName}}) []*{{.PascalName}}Response {
+	result := make([]*{{.PascalName}}Response, len(items))
+	for i, item := range items {
+		result[i] = From{{.PascalName}}(item)
+	}
+	return result
+}
+
+// Create{{.PascalName}}Request is the create {{.ChineseName}} request DTO
+type Create{{.PascalName}}Request struct {
+	Name string `json:"name" binding:"required,max=100"`
+	// TODO: Add create fields
+}
+
+// Update{{.PascalName}}Request is the update {{.ChineseName}} request DTO
+type Update{{.PascalName}}Request struct {
+	Name *string `json:"name" binding:"omitempty,max=100"`
+	// TODO: Add update fields
+}
+
+// Query{{.PascalName}}Request is the query {{.ChineseName}} request DTO
+type Query{{.PascalName}}Request struct {
+	Page     int    `form:"page" json:"page"`
+	PageSize int    `form:"page_size" json:"page_size"`
+	Keyword  string `form:"keyword" json:"keyword"`
+}

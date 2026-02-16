@@ -1,0 +1,147 @@
+package handler
+
+import (
+	"strconv"
+
+	"{{.ModulePath}}/internal/application/dto"
+	"{{.ModulePath}}/internal/application/service"
+	"{{.ModulePath}}/pkg/response"
+
+	"github.com/gin-gonic/gin"
+)
+
+// {{.PascalName}}Handler handles {{.ChineseName}} CRUD endpoints
+type {{.PascalName}}Handler struct {
+	svc *service.{{.PascalName}}AppService
+}
+
+// New{{.PascalName}}Handler creates a new handler
+func New{{.PascalName}}Handler(svc *service.{{.PascalName}}AppService) *{{.PascalName}}Handler {
+	return &{{.PascalName}}Handler{svc: svc}
+}
+
+// List returns {{.ChineseName}} list
+// @Summary  List {{.PascalName}}
+// @Tags     {{.PascalName}}
+// @Security Bearer
+// @Param    page      query int    false "page"      default(1)
+// @Param    page_size query int    false "page size"  default(10)
+// @Param    keyword   query string false "search keyword"
+// @Success  200 {object} response.Response{data=response.PageData}
+// @Router   /{{.PluralName}} [get]
+func (h *{{.PascalName}}Handler) List(c *gin.Context) {
+	var req dto.Query{{.PascalName}}Request
+	if err := c.ShouldBindQuery(&req); err != nil {
+		response.ParamError(c, "invalid parameters")
+		return
+	}
+
+	items, total, err := h.svc.List(&req)
+	if err != nil {
+		response.ServerError(c, "query failed")
+		return
+	}
+
+	response.SuccessPage(c, items, total, req.Page, req.PageSize)
+}
+
+// Create creates a {{.ChineseName}}
+// @Summary  Create {{.PascalName}}
+// @Tags     {{.PascalName}}
+// @Security Bearer
+// @Accept   json
+// @Produce  json
+// @Param    body body dto.Create{{.PascalName}}Request true "create parameters"
+// @Success  200  {object} response.Response{data=dto.{{.PascalName}}Response}
+// @Router   /{{.PluralName}} [post]
+func (h *{{.PascalName}}Handler) Create(c *gin.Context) {
+	var req dto.Create{{.PascalName}}Request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ParamError(c, "invalid parameters: "+err.Error())
+		return
+	}
+
+	item, err := h.svc.Create(&req)
+	if err != nil {
+		response.ServerError(c, "create failed: "+err.Error())
+		return
+	}
+
+	response.Success(c, item)
+}
+
+// Get returns {{.ChineseName}} details
+// @Summary  Get {{.PascalName}} by ID
+// @Tags     {{.PascalName}}
+// @Security Bearer
+// @Param    id path int true "ID"
+// @Success  200 {object} response.Response{data=dto.{{.PascalName}}Response}
+// @Router   /{{.PluralName}}/{id} [get]
+func (h *{{.PascalName}}Handler) Get(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ParamError(c, "invalid ID")
+		return
+	}
+
+	item, err := h.svc.GetByID(uint(id))
+	if err != nil {
+		response.NotFound(c, "record not found")
+		return
+	}
+
+	response.Success(c, item)
+}
+
+// Update updates a {{.ChineseName}}
+// @Summary  Update {{.PascalName}}
+// @Tags     {{.PascalName}}
+// @Security Bearer
+// @Accept   json
+// @Param    id   path int                            true "ID"
+// @Param    body body dto.Update{{.PascalName}}Request true "update parameters"
+// @Success  200  {object} response.Response{data=dto.{{.PascalName}}Response}
+// @Router   /{{.PluralName}}/{id} [put]
+func (h *{{.PascalName}}Handler) Update(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ParamError(c, "invalid ID")
+		return
+	}
+
+	var req dto.Update{{.PascalName}}Request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ParamError(c, "invalid parameters: "+err.Error())
+		return
+	}
+
+	item, err := h.svc.Update(uint(id), &req)
+	if err != nil {
+		response.ServerError(c, "update failed: "+err.Error())
+		return
+	}
+
+	response.Success(c, item)
+}
+
+// Delete deletes a {{.ChineseName}}
+// @Summary  Delete {{.PascalName}}
+// @Tags     {{.PascalName}}
+// @Security Bearer
+// @Param    id path int true "ID"
+// @Success  200 {object} response.Response
+// @Router   /{{.PluralName}}/{id} [delete]
+func (h *{{.PascalName}}Handler) Delete(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ParamError(c, "invalid ID")
+		return
+	}
+
+	if err := h.svc.Delete(uint(id)); err != nil {
+		response.ServerError(c, "delete failed: "+err.Error())
+		return
+	}
+
+	response.OK(c)
+}

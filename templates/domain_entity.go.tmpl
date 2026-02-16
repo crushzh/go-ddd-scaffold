@@ -1,0 +1,26 @@
+package {{.SnakeName}}
+
+import "time"
+
+// {{.PascalName}} is the {{.ChineseName}} aggregate root
+type {{.PascalName}} struct {
+	ID        uint
+	Name      string
+	// TODO: Add domain fields
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+// New{{.PascalName}} creates a new {{.ChineseName}} (factory method)
+func New{{.PascalName}}(name string) *{{.PascalName}} {
+	return &{{.PascalName}}{
+		Name: name,
+	}
+}
+
+// UpdateInfo updates basic info
+func (e *{{.PascalName}}) UpdateInfo(name string) {
+	if name != "" {
+		e.Name = name
+	}
+}
