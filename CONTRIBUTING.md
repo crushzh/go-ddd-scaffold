@@ -4,7 +4,7 @@ Thank you for your interest in contributing! Here's how to get started.
 
 ## Reporting Bugs
 
-- Search [existing issues](https://github.com/mrzhoong/go-ddd-scaffold/issues) first
+- Search [existing issues](https://github.com/crushzh/go-ddd-scaffold/issues) first
 - If not found, open a new issue with:
   - Go version (`go version`)
   - OS and architecture
@@ -59,7 +59,7 @@ When adding new modules, follow the layered architecture:
 ## Development Setup
 
 ```bash
-git clone https://github.com/mrzhoong/go-ddd-scaffold.git
+git clone https://github.com/crushzh/go-ddd-scaffold.git
 cd go-ddd-scaffold
 go mod download
 make run

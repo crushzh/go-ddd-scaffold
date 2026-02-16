@@ -2,7 +2,7 @@
 
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mrzhoong/go-ddd-scaffold?style=flat-square)](https://goreportcard.com/report/github.com/mrzhoong/go-ddd-scaffold)
+[![Go Report Card](https://goreportcard.com/badge/github.com/crushzh/go-ddd-scaffold?style=flat-square)](https://goreportcard.com/report/github.com/crushzh/go-ddd-scaffold)
 
 > 基於領域驅動設計（DDD）四層架構的 Go 專案腳手架，整合 Gin、GORM、JWT 認證、DI 容器、Swagger 文件和程式碼產生器。
 
@@ -73,7 +73,7 @@ interfaces -> application -> domain <- infrastructure
 
 ```bash
 # 1. 複製儲存庫
-git clone https://github.com/mrzhoong/go-ddd-scaffold.git
+git clone https://github.com/crushzh/go-ddd-scaffold.git
 cd go-ddd-scaffold
 
 # 2. 安裝依賴

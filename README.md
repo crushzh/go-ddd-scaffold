@@ -2,7 +2,7 @@
 
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mrzhoong/go-ddd-scaffold?style=flat-square)](https://goreportcard.com/report/github.com/mrzhoong/go-ddd-scaffold)
+[![Go Report Card](https://goreportcard.com/badge/github.com/crushzh/go-ddd-scaffold?style=flat-square)](https://goreportcard.com/report/github.com/crushzh/go-ddd-scaffold)
 
 > Production-ready Go project scaffold based on Domain-Driven Design (DDD) with clean 4-layer architecture, Gin, GORM, JWT auth, DI container, Swagger docs, and code generator.
 
@@ -73,7 +73,7 @@ interfaces -> application -> domain <- infrastructure
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/mrzhoong/go-ddd-scaffold.git
+git clone https://github.com/crushzh/go-ddd-scaffold.git
 cd go-ddd-scaffold
 
 # 2. Install dependencies
