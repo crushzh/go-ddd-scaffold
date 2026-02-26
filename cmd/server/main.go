@@ -1,3 +1,14 @@
+// @title           My Service API
+// @version         1.0.0
+// @description     Go DDD Scaffold - RESTful API documentation
+//
+// @host      localhost:8080
+// @BasePath  /api/v1
+//
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Enter your Bearer token
 package main
 
 import (

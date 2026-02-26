@@ -2,6 +2,8 @@ package database
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	"go-ddd-scaffold/pkg/config"
@@ -25,6 +27,11 @@ func NewDB(cfg *config.DatabaseConfig) (*DB, error) {
 
 	switch cfg.Type {
 	case "sqlite":
+		if dir := filepath.Dir(cfg.Path); dir != "" && dir != "." {
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				return nil, fmt.Errorf("failed to create database directory: %w", err)
+			}
+		}
 		dialector = sqlite.Open(cfg.Path)
 	case "mysql":
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",

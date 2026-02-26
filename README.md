@@ -21,10 +21,14 @@
 - **Cross-platform Build** — Linux (amd64/arm64/arm32), Windows, macOS
 - **Docker** multi-stage build + docker-compose
 - **Frontend Embedding** — `go:embed` for SPA static files
+- **Frontend Template** — UmiJS Max + Ant Design ProComponents (Login + Dashboard + CRUD)
+- **Swagger UI** — Pre-integrated, visit `/swagger/index.html` on startup
+- **SQLite Auto-setup** — Auto-creates data directory + default admin seed (admin/admin123)
+- **Self-extracting Installer** — `.run` package build (`make package-all`)
 - **Structured Logging** — Zap + Lumberjack log rotation
 - **Unified Response Format** — Standardized error code system
 - **Graceful Shutdown** — Signal handling
-- **Service Management** — systemd / daemon scripts
+- **Service Management** — systemd / daemon scripts + uninstall script
 
 ## Architecture
 
@@ -123,9 +127,11 @@ go-ddd-scaffold/
 │   ├── config/                                 #   Viper configuration
 │   ├── logger/                                 #   Zap logging
 │   └── response/                               #   Unified API response
+├── web/                                        # Frontend (UmiJS Max + ProComponents)
+├── docs/swagger/                               # Swagger docs (pre-generated)
 ├── templates/                                  # Code generator templates (7 files)
 ├── configs/config.yaml                         # Configuration file
-├── scripts/                                    # Deployment scripts
+├── scripts/                                    # Deployment scripts (install/uninstall/manage)
 ├── Makefile
 ├── Dockerfile
 ├── docker-compose.yml
@@ -304,14 +310,38 @@ make build-windows        # Windows
 | `make build-all` | Cross-platform build |
 | `make gen name=order cn=Order` | Generate DDD module |
 | `make docs` | Generate Swagger docs |
+| `make web` | Build frontend (UmiJS) |
+| `make package-all` | Build .run installers (all platforms) |
+| `make package-linux` | Build .run installer (amd64) |
+| `make package-arm64` | Build .run installer (arm64) |
 | `make test` | Run tests |
 | `make lint` | Run linter |
 | `make clean` | Clean build artifacts |
 | `make help` | Show all commands |
 
+## Frontend
+
+```bash
+cd web
+npm install
+npm run dev     # Development (http://localhost:8000, proxy to :8080)
+npm run build   # Production build (output: ../internal/web/dist/)
+```
+
+Built frontend is embedded into the Go binary via `go:embed`. Run `make web && make build` to produce a single binary with frontend included.
+
 ## Customization
 
-Rename the module:
+### Using init.sh (Recommended)
+
+If you cloned this template from [go-scaffold](https://github.com/crushzh/go-scaffold), use the initialization script:
+
+```bash
+./init.sh ddd my-service
+# Automatically: copy template → replace module name → go mod tidy → swag init → git init
+```
+
+### Manual Rename
 
 ```bash
 # macOS

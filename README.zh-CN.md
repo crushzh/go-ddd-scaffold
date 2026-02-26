@@ -21,10 +21,14 @@
 - **跨平台编译** — Linux (amd64/arm64/arm32)、Windows、macOS
 - **Docker** 多阶段构建 + docker-compose
 - **前端嵌入** — `go:embed` 内嵌 SPA 前端
+- **前端模板** — UmiJS Max + Ant Design ProComponents（登录 + 仪表盘 + CRUD 示例）
+- **Swagger UI** — 预集成，启动即可访问 `/swagger/index.html`
+- **SQLite 自动初始化** — 自动创建数据目录 + 默认管理员种子数据（admin/admin123）
+- **自解压安装包** — `.run` 一键安装包构建（`make package-all`）
 - **结构化日志** — Zap + Lumberjack 日志轮转
 - **统一响应格式** — 标准错误码体系
 - **优雅退出** — 信号处理
-- **服务管理脚本** — systemd / 守护进程
+- **服务管理脚本** — systemd / 守护进程 + 卸载脚本
 
 ## 架构
 
@@ -123,9 +127,11 @@ go-ddd-scaffold/
 │   ├── config/                                 #   Viper 配置
 │   ├── logger/                                 #   Zap 日志
 │   └── response/                               #   统一响应
+├── web/                                        # 前端（UmiJS Max + ProComponents）
+├── docs/swagger/                               # Swagger 文档（预生成）
 ├── templates/                                  # 代码生成模板（7 个）
 ├── configs/config.yaml                         # 配置文件
-├── scripts/                                    # 部署脚本
+├── scripts/                                    # 部署脚本（安装/卸载/管理）
 ├── Makefile
 ├── Dockerfile
 ├── docker-compose.yml
@@ -304,14 +310,38 @@ make build-windows        # Windows
 | `make build-all` | 全平台编译 |
 | `make gen name=order cn=订单` | 生成 DDD 模块 |
 | `make docs` | 生成 Swagger 文档 |
+| `make web` | 构建前端（UmiJS） |
+| `make package-all` | 构建 .run 安装包（全平台） |
+| `make package-linux` | 构建 .run 安装包（amd64） |
+| `make package-arm64` | 构建 .run 安装包（arm64） |
 | `make test` | 运行测试 |
 | `make lint` | 运行代码检查 |
 | `make clean` | 清理构建产物 |
 | `make help` | 查看所有命令 |
 
+## 前端
+
+```bash
+cd web
+npm install
+npm run dev     # 开发模式（http://localhost:8000，代理到 :8080）
+npm run build   # 生产构建（输出到 ../internal/web/dist/）
+```
+
+构建后的前端通过 `go:embed` 嵌入 Go 二进制。执行 `make web && make build` 即可生成包含前端的单一可执行文件。
+
 ## 自定义
 
-重命名模块：
+### 使用 init.sh（推荐）
+
+如果从 [go-scaffold](https://github.com/crushzh/go-scaffold) 克隆，使用初始化脚本：
+
+```bash
+./init.sh ddd my-service
+# 自动完成: 复制模板 → 替换模块名 → go mod tidy → swag init → git init
+```
+
+### 手动重命名
 
 ```bash
 # macOS

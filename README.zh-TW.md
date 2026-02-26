@@ -21,10 +21,14 @@
 - **跨平台編譯** — Linux (amd64/arm64/arm32)、Windows、macOS
 - **Docker** 多階段建置 + docker-compose
 - **前端嵌入** — `go:embed` 內嵌 SPA 前端
+- **前端範本** — UmiJS Max + Ant Design ProComponents（登入 + 儀表板 + CRUD 範例）
+- **Swagger UI** — 預整合，啟動即可存取 `/swagger/index.html`
+- **SQLite 自動初始化** — 自動建立資料目錄 + 預設管理員種子資料（admin/admin123）
+- **自解壓安裝包** — `.run` 一鍵安裝包建置（`make package-all`）
 - **結構化日誌** — Zap + Lumberjack 日誌輪替
 - **統一回應格式** — 標準錯誤碼體系
 - **優雅退出** — 訊號處理
-- **服務管理腳本** — systemd / 守護程序
+- **服務管理腳本** — systemd / 守護程序 + 解除安裝腳本
 
 ## 架構
 
@@ -123,9 +127,11 @@ go-ddd-scaffold/
 │   ├── config/                                 #   Viper 設定
 │   ├── logger/                                 #   Zap 日誌
 │   └── response/                               #   統一回應
+├── web/                                        # 前端（UmiJS Max + ProComponents）
+├── docs/swagger/                               # Swagger 文件（預產生）
 ├── templates/                                  # 程式碼產生範本（7 個）
 ├── configs/config.yaml                         # 設定檔
-├── scripts/                                    # 部署腳本
+├── scripts/                                    # 部署腳本（安裝/解除安裝/管理）
 ├── Makefile
 ├── Dockerfile
 ├── docker-compose.yml
@@ -276,9 +282,29 @@ make build-windows        # Windows
 ./scripts/manage.sh status    # 檢視狀態
 ```
 
+## 前端
+
+```bash
+cd web
+npm install
+npm run dev     # 開發模式（http://localhost:8000，代理到 :8080）
+npm run build   # 生產建置（輸出到 ../internal/web/dist/）
+```
+
+建置後的前端透過 `go:embed` 嵌入 Go 二進位檔。執行 `make web && make build` 即可產生包含前端的單一可執行檔。
+
 ## 自訂
 
-重新命名模組：
+### 使用 init.sh（建議）
+
+如果從 [go-scaffold](https://github.com/crushzh/go-scaffold) 複製，使用初始化腳本：
+
+```bash
+./init.sh ddd my-service
+# 自動完成: 複製範本 → 替換模組名 → go mod tidy → swag init → git init
+```
+
+### 手動重新命名
 
 ```bash
 # macOS

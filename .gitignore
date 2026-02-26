@@ -1,0 +1,50 @@
+# Build
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Data
+data/
+logs/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Test
+coverage.out
+coverage.html
+*.test
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Proto generated (optional: uncomment if you commit generated code)
+# api/proto/gen/
+
+# Swagger generated (optional: uncomment if you commit generated docs)
+# docs/swagger/
+
+# Frontend
+web/node_modules/
+web/.umi/
+web/.umi-production/
+
+# Frontend dist (keep .gitkeep but ignore build output)
+internal/web/dist/*
+!internal/web/dist/.gitkeep

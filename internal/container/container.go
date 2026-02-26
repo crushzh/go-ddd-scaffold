@@ -31,11 +31,15 @@ func New(cfg *config.Config) (*Container, error) {
 
 	// 2. Auto-migrate
 	if err := db.AutoMigrate(
+		&database.UserModel{},
 		&database.ExampleModel{},
 		// GEN:MODEL_MIGRATE - Code generator appends models here, do not remove
 	); err != nil {
 		return nil, err
 	}
+
+	// Seed default admin user
+	database.EnsureDefaultAdmin(db.GormDB())
 
 	// 3. Create repositories (infra -> domain interface)
 	exampleRepo := database.NewExampleRepository(db)

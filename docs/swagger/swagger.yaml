@@ -1,0 +1,270 @@
+basePath: /api/v1
+definitions:
+  go-ddd-scaffold_internal_application_dto.CreateExampleRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 100
+        type: string
+    required:
+    - name
+    type: object
+  go-ddd-scaffold_internal_application_dto.ExampleResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  go-ddd-scaffold_internal_application_dto.UpdateExampleRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      status:
+        enum:
+        - active
+        - inactive
+        type: string
+    type: object
+  interfaces_http_handler.loginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  interfaces_http_handler.tokenResponse:
+    properties:
+      expires_at:
+        type: integer
+      token:
+        type: string
+    type: object
+  response.PageData:
+    properties:
+      list: {}
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Go DDD Scaffold - RESTful API documentation
+  title: My Service API
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/interfaces_http_handler.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/interfaces_http_handler.tokenResponse'
+              type: object
+      summary: User login
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/interfaces_http_handler.tokenResponse'
+              type: object
+      security:
+      - Bearer: []
+      summary: Refresh token
+      tags:
+      - Auth
+  /examples:
+    get:
+      parameters:
+      - default: 1
+        description: page
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: page size
+        in: query
+        name: page_size
+        type: integer
+      - description: search keyword
+        in: query
+        name: keyword
+        type: string
+      - description: status filter
+        enum:
+        - active
+        - inactive
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageData'
+              type: object
+      security:
+      - Bearer: []
+      summary: List examples
+      tags:
+      - Example
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: create parameters
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-ddd-scaffold_internal_application_dto.CreateExampleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-ddd-scaffold_internal_application_dto.ExampleResponse'
+              type: object
+      security:
+      - Bearer: []
+      summary: Create example
+      tags:
+      - Example
+  /examples/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete example
+      tags:
+      - Example
+    get:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-ddd-scaffold_internal_application_dto.ExampleResponse'
+              type: object
+      security:
+      - Bearer: []
+      summary: Get example by ID
+      tags:
+      - Example
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: update parameters
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/go-ddd-scaffold_internal_application_dto.UpdateExampleRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/go-ddd-scaffold_internal_application_dto.ExampleResponse'
+              type: object
+      security:
+      - Bearer: []
+      summary: Update example
+      tags:
+      - Example
+securityDefinitions:
+  Bearer:
+    description: Enter your Bearer token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

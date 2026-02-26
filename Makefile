@@ -43,6 +43,16 @@ endif
 .PHONY: all
 all: build
 
+# ==================== Frontend ====================
+
+.PHONY: web
+web:
+	@echo "Building frontend..."
+	@cd web && npm install && npm run build
+	@echo "Frontend build complete"
+
+# ==================== Development ====================
+
 .PHONY: run
 run:
 	$(GO) run ./cmd/server/ -c configs/config.yaml
@@ -89,6 +99,39 @@ build-windows:
 .PHONY: build-all
 build-all: build-linux build-arm64 build-arm32 build-windows
 	@echo "All platforms build complete!"
+
+# ==================== Packaging ====================
+
+# Generate .run self-extracting installer
+define make_package
+	@echo "Packaging $(APP_NAME)-$(1)..."
+	@mkdir -p $(BUILD_DIR)/pkg-$(1)
+	@cp $(BUILD_DIR)/linux-$(1)/$(APP_NAME) $(BUILD_DIR)/pkg-$(1)/
+	@cp -r configs $(BUILD_DIR)/pkg-$(1)/
+	@cp scripts/install.sh $(BUILD_DIR)/pkg-$(1)/
+	@cp scripts/uninstall.sh $(BUILD_DIR)/pkg-$(1)/
+	@cd $(BUILD_DIR) && tar czf pkg-$(1).tar.gz -C pkg-$(1) .
+	@cat scripts/makeself-header.sh $(BUILD_DIR)/pkg-$(1).tar.gz > $(BUILD_DIR)/$(APP_NAME)-$(1)-$(VERSION).run
+	@chmod +x $(BUILD_DIR)/$(APP_NAME)-$(1)-$(VERSION).run
+	@rm -rf $(BUILD_DIR)/pkg-$(1) $(BUILD_DIR)/pkg-$(1).tar.gz
+	@echo "Package: $(BUILD_DIR)/$(APP_NAME)-$(1)-$(VERSION).run"
+endef
+
+.PHONY: package-linux
+package-linux: build-linux
+	$(call make_package,amd64)
+
+.PHONY: package-arm64
+package-arm64: build-arm64
+	$(call make_package,arm64)
+
+.PHONY: package-arm32
+package-arm32: build-arm32
+	$(call make_package,arm32)
+
+.PHONY: package-all
+package-all: package-linux package-arm64 package-arm32
+	@echo "All packages complete!"
 
 # ==================== Code Generator ====================
 
@@ -148,13 +191,38 @@ info:
 help:
 	@echo "$(APP_NAME) Build System (DDD)"
 	@echo ""
+	@echo "Development:"
 	@echo "  run             Run in development mode"
 	@echo "  build           Build for local platform"
-	@echo "  build-all       Build for all platforms"
+	@echo "  web             Build frontend"
+	@echo ""
+	@echo "Cross Compile:"
+	@echo "  build-linux     Build Linux amd64"
+	@echo "  build-arm64     Build Linux arm64"
+	@echo "  build-arm32     Build Linux arm32 (ARMv7)"
+	@echo "  build-windows   Build Windows"
+	@echo "  build-all       Build all platforms"
+	@echo ""
+	@echo "Packaging:"
+	@echo "  package-linux   Package .run installer (amd64)"
+	@echo "  package-arm64   Package .run installer (arm64)"
+	@echo "  package-arm32   Package .run installer (arm32)"
+	@echo "  package-all     Package all platforms"
+	@echo ""
+	@echo "Code Generator:"
 	@echo "  gen             Generate DDD module (make gen name=order cn=Order)"
+	@echo ""
+	@echo "Documentation:"
 	@echo "  docs            Generate Swagger docs"
-	@echo "  test            Run tests"
+	@echo ""
+	@echo "Quality:"
 	@echo "  lint            Run linter"
+	@echo "  test            Run tests"
+	@echo "  coverage        Test coverage"
+	@echo "  fmt             Format code"
+	@echo ""
+	@echo "Misc:"
 	@echo "  deps            Download dependencies"
 	@echo "  clean           Clean build artifacts"
+	@echo "  info            Show build configuration"
 	@echo "  help            Show this help"

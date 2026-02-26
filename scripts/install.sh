@@ -62,9 +62,18 @@ else
     warn "Config file already exists, skipping"
 fi
 
-# Copy management script
+# Copy management scripts
 cp "${PACKAGE_DIR}/scripts/manage.sh" "${INSTALL_DIR}/scripts/"
 chmod +x "${INSTALL_DIR}/scripts/manage.sh"
+
+# Copy uninstall script (if present)
+if [ -f "${PACKAGE_DIR}/scripts/uninstall.sh" ]; then
+    cp "${PACKAGE_DIR}/scripts/uninstall.sh" "${INSTALL_DIR}/scripts/"
+    chmod +x "${INSTALL_DIR}/scripts/uninstall.sh"
+elif [ -f "${PACKAGE_DIR}/uninstall.sh" ]; then
+    cp "${PACKAGE_DIR}/uninstall.sh" "${INSTALL_DIR}/scripts/"
+    chmod +x "${INSTALL_DIR}/scripts/uninstall.sh"
+fi
 
 # Copy frontend files (if present)
 if [ -d "${PACKAGE_DIR}/dist" ]; then
